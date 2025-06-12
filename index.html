@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Security Camera Configuration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4A90E2 0%, #357ABD 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .progress-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            padding: 10px;
+            font-size: 14px;
+            color: #6c757d;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            color: #4A90E2;
+            font-weight: 600;
+        }
+
+        .progress-step.completed {
+            color: #28a745;
+        }
+
+        .progress-step::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: #dee2e6;
+            border-radius: 2px;
+        }
+
+        .progress-step.active::after {
+            background: #4A90E2;
+        }
+
+        .progress-step.completed::after {
+            background: #28a745;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .form-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            border-radius: 2px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4A90E2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            background: #e9ecef;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box h4 {
+            color: #1976d2;
+            margin-bottom: 5px;
+        }
+
+        .info-box p {
+            color: #424242;
+            font-size: 14px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .time-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .time-input-group input {
+            flex: 1;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .day-item {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .day-item.active {
+            background: #4A90E2;
+            color: white;
+        }
+
+        .alert-config {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .alert-config h4 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+
+        .email-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .email-input-group input {
+            flex: 1;
+        }
+
+        .email-input-group button {
+            padding: 12px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .email-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .email-tag {
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .email-tag .remove {
+            cursor: pointer;
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .preview-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .preview-section h3 {
+            color: #495057;
+            margin-bottom: 15px;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .preview-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4A90E2;
+        }
+
+        .preview-item h4 {
+            color: #4A90E2;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .preview-item p {
+            color: #6c757d;
+            font-size: 13px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4A90E2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .form-container {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-bar {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .progress-step {
+                font-size: 12px;
+            }
+
+            .button-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 AI Security Camera Configuration</h1>
+            <p>Configure your intelligent security monitoring system</p>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-step active" data-step="1">📹 Camera Info</div>
+            <div class="progress-step" data-step="2">📍 Location</div>
+            <div class="progress-step" data-step="3">🏢 Zone Setup</div>
+            <div class="progress-step" data-step="4">🚨 Anomalies</div>
+            <div class="progress-step" data-step="5">⚠️ Alerts</div>
+            <div class="progress-step" data-step="6">📹 Recording</div>
+            <div class="progress-step" data-step="7">✅ Review</div>
+        </div>
+
+        <div class="form-container">
+            <!-- Step 1: Camera Information -->
+            <div class="form-section active" id="step-1">
+                <h2 class="section-title">📹 Camera Information</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="camera_id">Camera ID <span class="required">*</span></label>
+                        <input type="text" id="camera_id" name="camera_id" placeholder="CAM001" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="camera_name">Camera Name <span class="required">*</span></label>
+                        <input type="text" id="camera_name" name="camera_name" placeholder="Main Entrance Camera" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="rtsp_url">RTSP URL <span class="required">*</span></label>
+                        <input type="url" id="rtsp_url" name="rtsp_url" placeholder="rtsp://admin:password@192.168.1.101:554/stream1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="camera_type">Camera Type</label>
+                        <select id="camera_type" name="camera_type">
+                            <option value="fixed">Fixed Camera</option>
+                            <option value="ptz">PTZ Camera</option>
+                            <option value="dome">Dome Camera</option>
+                            <option value="bullet">Bullet Camera</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h4>📋 Camera Setup Tips</h4>
+                    <p>Ensure your RTSP URL is accessible and the camera is powered on. Test the connection before proceeding.</p>
+                </div>
+            </div>
+
+            <!-- Step 2: Location Setup -->
+            <div class="form-section" id="step-2">
+                <h2 class="section-title">📍 Location & Physical Setup</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="building">Building/Facility <span class="required">*</span></label>
+                        <input type="text" id="building" name="building" placeholder="Building A" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="floor">Floor/Level</label>
+                        <input type="text" id="floor" name="floor" placeholder="Ground Floor">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gate_number">Gate/Door Number</label>
+                        <input type="text" id="gate_number" name="gate_number" placeholder="Gate 1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="zone_name">Zone Name <span class="required">*</span></label>
+                        <input type="text" id="zone_name" name="zone_name" placeholder="Main Entrance" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exact_position">Exact Position</label>
+                        <input type="text" id="exact_position" name="exact_position" placeholder="Above main entrance door">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="coverage_area">Coverage Area</label>
+                        <input type="text" id="coverage_area" name="coverage_area" placeholder="20x15 meters">
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="latitude">GPS Latitude</label>
+                        <input type="number" id="latitude" name="latitude" step="any" placeholder="40.7128">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="longitude">GPS Longitude</label>
+                        <input type="number" id="longitude" name="longitude" step="any" placeholder="-74.0060">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Zone Configuration -->
+            <div class="form-section" id="step-3">
+                <h2 class="section-title">🏢 Zone Configuration</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="zone_id">Zone ID <span class="required">*</span></label>
+                        <input type="text" id="zone_id" name="zone_id" placeholder="ZONE_001" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="zone_type">Zone Type <span class="required">*</span></label>
+                        <select id="zone_type" name="zone_type" required>
+                            <option value="">Select Zone Type</option>
+                            <option value="public_area">Public Area</option>
+                            <option value="office_space">Office Space</option>
+                            <option value="restricted_area">Restricted Area</option>
+                            <option value="parking_lot">Parking Lot</option>
+                            <option value="warehouse">Warehouse</option>
+                            <option value="entrance_exit">Entrance/Exit</option>
+                            <option value="server_room">Server Room</option>
+                            <option value="chemical_storage">Chemical Storage</option>
+                            <option value="loading_dock">Loading Dock</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="security_level">Security Level <span class="required">*</span></label>
+                        <select id="security_level" name="security_level" required>
+                            <option value="">Select Security Level</option>
+                            <option value="low">Low - Public Areas</option>
+                            <option value="medium">Medium - Employee Areas</option>
+                            <option value="high">High - Restricted Areas</option>
+                            <option value="critical">Critical - Server Rooms</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="max_occupancy">Maximum Occupancy</label>
+                        <input type="number" id="max_occupancy" name="max_occupancy" placeholder="50" min="1">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Access Control</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="is_restricted" name="is_restricted">
+                            <label for="is_restricted">Restricted Area</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="visitor_access" name="visitor_access">
+                            <label for="visitor_access">Visitor Access Allowed</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="escort_required" name="escort_required">
+                            <label for="escort_required">Escort Required</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="emergency_override" name="emergency_override" checked>
+                            <label for="emergency_override">Emergency Override</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="authorized_personnel">Authorized Personnel IDs</label>
+                    <textarea id="authorized_personnel" name="authorized_personnel" placeholder="EMP001, EMP025, EMP055"></textarea>
+                </div>
+            </div>
+
+            <!-- Step 4: Anomaly Detection -->
+            <div class="form-section" id="step-4">
+                <h2 class="section-title">🚨 Anomaly Detection Rules</h2>
+                
+                <div class="info-box">
+                    <h4>⚡ Detection Settings</h4>
+                    <p>Configure which behaviors and events should trigger alerts. Adjust thresholds based on your security requirements.</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Anomaly Types to Monitor</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="unauthorized_access" name="unauthorized_access" checked>
+                            <label for="unauthorized_access">Unauthorized Access</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="loitering" name="loitering" checked>
+                            <label for="loitering">Loitering Detection</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="overcrowding" name="overcrowding">
+                            <label for="overcrowding">Overcrowding</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="tailgating" name="tailgating">
+                            <label for="tailgating">Tailgating</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="perimeter_breach" name="perimeter_breach">
+                            <label for="perimeter_breach">Perimeter Breach</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="object_abandonment" name="object_abandonment">
+                            <label for="object_abandonment">Object Left Behind</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="fighting" name="fighting">
+                            <label for="fighting">Fighting/Violence</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="ppe_violations" name="ppe_violations">
+                            <label for="ppe_violations">PPE Violations</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="loitering_threshold">Loitering Threshold (seconds)</label>
+                        <input type="number" id="loitering_threshold" name="loitering_threshold" value="300" min="30">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confidence_threshold">Detection Confidence (%)</label>
+                        <input type="number" id="confidence_threshold" name="confidence_threshold" value="70" min="50" max="100">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="person_threshold">Max People (Overcrowding)</label>
+                        <input type="number" id="person_threshold" name="person_threshold" value="10" min="1">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="object_threshold">Object Abandonment (seconds)</label>
+                        <input type="number" id="object_threshold" name="object_threshold" value="600" min="60">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="required_ppe">Required PPE Equipment</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="hard_hat" name="hard_hat">
+                            <label for="hard_hat">Hard Hat</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="safety_vest" name="safety_vest">
+                            <label for="safety_vest">Safety Vest</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="safety_goggles" name="safety_goggles">
+                            <label for="safety_goggles">Safety Goggles</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="gloves" name="gloves">
+                            <label for="gloves">Gloves</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Alert Configuration -->
+            <div class="form-section" id="step-5">
+                <h2 class="section-title">⚠️ Alert Configuration</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="start_time">Operating Hours - Start Time</label>
+                        <input type="time" id="start_time" name="start_time" value="06:00">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="end_time">Operating Hours - End Time</label>
+                        <input type="time" id="end_time" name="end_time" value="22:00">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Operating Days</label>
+                    <div class="days-grid">
+                        <div class="day-item active" data-day="monday">Mon</div>
+                        <div class="day-item active" data-day="tuesday">Tue</div>
+                        <div class="day-item active" data-day="wednesday">Wed</div>
+                        <div class="day-item active" data-day="thursday">Thu</div>
+                        <div class="day-item active" data-day="friday">Fri</div>
+                        <div class="day-item" data-day="saturday">Sat</div>
+                        <div class="day-item" data-day="sunday">Sun</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="after_hours_monitoring" name="after_hours_monitoring" checked>
+                        <label for="after_hours_monitoring">Monitor After Hours</label>
+                    </div>
+                </div>
+
+                <div class="alert-config">
+                    <h4>📧 Email Notifications</h4>
+                    <div class="email-input-group">
+                        <input type="email" id="email_input" placeholder="security@company.com">
+                        <button type="button" onclick="addEmail()">Add Email</button>
+                    </div>
+                    <div class="email-list" id="email-list"></div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="alert_response_time">Alert Response Time</label>
+                        <select id="alert_response_time" name="alert_response_time">
+                            <option value="0">Immediate</option>
+                            <option value="30">30 seconds</option>
+                            <option value="60">1 minute</option>
+                            <option value="300">5 minutes</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="cooldown_period">Alert Cooldown (seconds)</label>
+                        <input type="number" id="cooldown_period" name="cooldown_period" value="60" min="30">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Notification Methods</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="email_notifications" name="email_notifications" checked>
+                            <label for="email_notifications">📧 Email</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="sms_notifications" name="sms_notifications">
+                            <label for="sms_notifications">📱 SMS</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="push_notifications" name="push_notifications" checked>
+                            <label for="push_notifications">🔔 Push Notification</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="webhook_notifications" name="webhook_notifications">
+                            <label for="webhook_notifications">🔗 Webhook</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6: Recording Settings -->
+            <div class="form-section" id="step-6">
+                <h2 class="section-title">📹 Recording & Storage</h2>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="recording_mode">Recording Mode</label>
+                        <select id="recording_mode" name="recording_mode">
+                            <option value="continuous">Continuous Recording</option>
+                            <option value="motion_based">Motion-Based Recording</option>
+                            <option value="event_based">Event-Based Recording</option>
+                            <option value="scheduled">Scheduled Recording</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="video_quality">Video Quality</label>
+                        <select id="video_quality" name="video_quality">
+                            <option value="720p">HD (720p)</option>
+                            <option value="1080p" selected>Full HD (1080p)</option>
+                            <option value="4k">4K Ultra HD</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fps">Frame Rate (FPS)</label>
+                        <select id="fps" name="fps">
+                            <option value="15">15 FPS</option>
+                            <option value="25" selected>25 FPS</option>
+                            <option value="30">30 FPS</option>
+                            <option value="60">60 FPS</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="retention_period">Keep Recordings (days)</label>
+                        <input type="number" id="retention_period" name="retention_period" value="30" min="1" max="365">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Recording Options</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="audio_recording" name="audio_recording">
+                            <label for="audio_recording">🎤 Audio Recording</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="night_vision" name="night_vision" checked>
+                            <label for="night_vision">🌙 Night Vision</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="backup_enabled" name="backup_enabled">
+                            <label for="backup_enabled">💾 Backup to Cloud</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="encryption_enabled" name="encryption_enabled" checked>
+                            <label for="encryption_enabled">🔒 Encrypt Videos</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="pre_event_buffer">Pre-Event Recording (seconds)</label>
+                        <input type="number" id="pre_event_buffer" name="pre_event_buffer" value="10" min="0" max="60">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="post_event_duration">Post-Event Recording (seconds)</label>
+                        <input type="number" id="post_event_duration" name="post_event_duration" value="30" min="0" max="300">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 7: Review & Submit -->
+            <div class="form-section" id="step-7">
+                <h2 class="section-title">✅ Review Configuration</h2>
+                
+                <div class="preview-section">
+                    <h3>📋 Configuration Summary</h3>
+                    <div class="preview-grid" id="preview-content">
+                        <!-- Preview content will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Saving camera configuration...</p>
+                </div>
+
+                <div class="success-message" id="success-message" style="display: none;">
+                    <h4>✅ Configuration Saved Successfully!</h4>
+                    <p>Your camera has been configured and is ready for monitoring. The AI system will start processing according to your settings.</p>
+                </div>
+
+                <div class="error-message" id="error-message" style="display: none;">
+                    <h4>❌ Configuration Error</h4>
+                    <p id="error-text">There was an error saving your configuration. Please check your settings and try again.</p>
+                </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <div class="button-group">
+                <button type="button" class="btn btn-secondary" id="prev-btn" onclick="previousStep()" style="display: none;">
+                    ← Previous
+                </button>
+                
+                <div style="flex-grow: 1;"></div>
+                
+                <button type="button" class="btn btn-primary" id="next-btn" onclick="nextStep()">
+                    Next →
+                </button>
+                
+                <button type="button" class="btn btn-success" id="submit-btn" onclick="submitConfiguration()" style="display: none;">
+                    💾 Save Configuration
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 7;
+        let emailList = [];
+        let operatingDays = {
+            monday: true,
+            tuesday: true,
+            wednesday: true,
+            thursday: true,
+            friday: true,
+            saturday: false,
+            sunday: false
+        };
+
+        function updateProgressBar() {
+            const steps = document.querySelectorAll('.progress-step');
+            steps.forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                if (index + 1 < currentStep) {
+                    step.classList.add('completed');
+                } else if (index + 1 === currentStep) {
+                    step.classList.add('active');
+                }
+            });
+        }
+
+        function showStep(step) {
+            // Hide all sections
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show current section
+            document.getElementById(`step-${step}`).classList.add('active');
+            
+            // Update navigation buttons
+            document.getElementById('prev-btn').style.display = step === 1 ? 'none' : 'block';
+            document.getElementById('next-btn').style.display = step === totalSteps ? 'none' : 'block';
+            document.getElementById('submit-btn').style.display = step === totalSteps ? 'block' : 'none';
+            
+            // Update progress bar
+            updateProgressBar();
+            
+            // Populate preview if on last step
+            if (step === totalSteps) {
+                populatePreview();
+            }
+        }
+
+        function nextStep() {
+            if (validateCurrentStep()) {
+                if (currentStep < totalSteps) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+
+        function validateCurrentStep() {
+            const currentSection = document.getElementById(`step-${currentStep}`);
+            const requiredFields = currentSection.querySelectorAll('[required]');
+            
+            for (let field of requiredFields) {
+                if (!field.value.trim()) {
+                    field.focus();
+                    alert(`Please fill in the ${field.previousElementSibling.textContent.replace(' *', '')} field.`);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function addEmail() {
+            const emailInput = document.getElementById('email_input');
+            const email = emailInput.value.trim();
+            
+            if (email && !emailList.includes(email)) {
+                emailList.push(email);
+                updateEmailList();
+                emailInput.value = '';
+            }
+        }
+
+        function removeEmail(email) {
+            emailList = emailList.filter(e => e !== email);
+            updateEmailList();
+        }
+
+        function updateEmailList() {
+            const emailListElement = document.getElementById('email-list');
+            emailListElement.innerHTML = emailList.map(email => 
+                `<div class="email-tag">
+                    ${email}
+                    <span class="remove" onclick="removeEmail('${email}')">×</span>
+                </div>`
+            ).join('');
+        }
+
+        // Day selection handling
+        document.querySelectorAll('.day-item').forEach(day => {
+            day.addEventListener('click', function() {
+                const dayName = this.dataset.day;
+                operatingDays[dayName] = !operatingDays[dayName];
+                this.classList.toggle('active');
+            });
+        });
+
+        // Progress step click navigation
+        document.querySelectorAll('.progress-step').forEach(step => {
+            step.addEventListener('click', function() {
+                const stepNumber = parseInt(this.dataset.step);
+                if (stepNumber <= currentStep || stepNumber === currentStep + 1) {
+                    currentStep = stepNumber;
+                    showStep(currentStep);
+                }
+            });
+        });
+
+        function populatePreview() {
+            const previewContent = document.getElementById('preview-content');
+            
+            const cameraId = document.getElementById('camera_id').value;
+            const cameraName = document.getElementById('camera_name').value;
+            const building = document.getElementById('building').value;
+            const zoneName = document.getElementById('zone_name').value;
+            const zoneType = document.getElementById('zone_type').value;
+            const securityLevel = document.getElementById('security_level').value;
+            const recordingMode = document.getElementById('recording_mode').value;
+            const retentionPeriod = document.getElementById('retention_period').value;
+            
+            previewContent.innerHTML = `
+                <div class="preview-item">
+                    <h4>Camera Information</h4>
+                    <p><strong>ID:</strong> ${cameraId}</p>
+                    <p><strong>Name:</strong> ${cameraName}</p>
+                </div>
+                <div class="preview-item">
+                    <h4>Location</h4>
+                    <p><strong>Building:</strong> ${building}</p>
+                    <p><strong>Zone:</strong> ${zoneName}</p>
+                </div>
+                <div class="preview-item">
+                    <h4>Security Setup</h4>
+                    <p><strong>Zone Type:</strong> ${zoneType}</p>
+                    <p><strong>Security Level:</strong> ${securityLevel}</p>
+                </div>
+                <div class="preview-item">
+                    <h4>Recording</h4>
+                    <p><strong>Mode:</strong> ${recordingMode}</p>
+                    <p><strong>Retention:</strong> ${retentionPeriod} days</p>
+                </div>
+                <div class="preview-item">
+                    <h4>Alerts</h4>
+                    <p><strong>Email Recipients:</strong> ${emailList.length}</p>
+                    <p><strong>Active Days:</strong> ${Object.values(operatingDays).filter(Boolean).length}/7</p>
+                </div>
+                <div class="preview-item">
+                    <h4>Anomaly Detection</h4>
+                    <p><strong>Unauthorized Access:</strong> ${document.getElementById('unauthorized_access').checked ? 'Enabled' : 'Disabled'}</p>
+                    <p><strong>Loitering:</strong> ${document.getElementById('loitering').checked ? 'Enabled' : 'Disabled'}</p>
+                </div>
+            `;
+        }
+
+        function collectFormData() {
+            const formData = {
+                camera_info: {
+                    camera_id: document.getElementById('camera_id').value,
+                    camera_name: document.getElementById('camera_name').value,
+                    rtsp_url: document.getElementById('rtsp_url').value,
+                    camera_type: document.getElementById('camera_type').value,
+                    status: "active"
+                },
+                location: {
+                    building: document.getElementById('building').value,
+                    floor: document.getElementById('floor').value,
+                    gate_number: document.getElementById('gate_number').value,
+                    zone_name: document.getElementById('zone_name').value,
+                    exact_position: document.getElementById('exact_position').value,
+                    coverage_area: document.getElementById('coverage_area').value,
+                    coordinates: {
+                        latitude: parseFloat(document.getElementById('latitude').value) || null,
+                        longitude: parseFloat(document.getElementById('longitude').value) || null
+                    }
+                },
+                zone_config: {
+                    zone_id: document.getElementById('zone_id').value,
+                    zone_type: document.getElementById('zone_type').value,
+                    security_level: document.getElementById('security_level').value,
+                    max_occupancy: parseInt(document.getElementById('max_occupancy').value) || null,
+                    connected_zones: []
+                },
+                access_control: {
+                    is_restricted: document.getElementById('is_restricted').checked,
+                    visitor_access: {
+                        allowed: document.getElementById('visitor_access').checked,
+                        escort_required: document.getElementById('escort_required').checked
+                    },
+                    emergency_override: document.getElementById('emergency_override').checked,
+                    authorized_list: document.getElementById('authorized_personnel').value.split(',').map(s => s.trim()).filter(Boolean)
+                },
+                time_settings: {
+                    operating_hours: {
+                        start_time: document.getElementById('start_time').value,
+                        end_time: document.getElementById('end_time').value
+                    },
+                    operating_days: operatingDays,
+                    after_hours_monitoring: document.getElementById('after_hours_monitoring').checked
+                },
+                anomaly_detection: {
+                    unauthorized_access: { enabled: document.getElementById('unauthorized_access').checked, confidence_threshold: 0.7 },
+                    loitering: { 
+                        enabled: document.getElementById('loitering').checked, 
+                        duration_threshold: parseInt(document.getElementById('loitering_threshold').value) || 300 
+                    },
+                    overcrowding: { 
+                        enabled: document.getElementById('overcrowding').checked,
+                        person_threshold: parseInt(document.getElementById('person_threshold').value) || 10
+                    }
+                },
+                alert_settings: {
+                    real_time_alerts: true,
+                    notification_channels: {
+                        email: {
+                            enabled: document.getElementById('email_notifications').checked,
+                            recipients: emailList
+                        },
+                        sms: {
+                            enabled: document.getElementById('sms_notifications').checked
+                        },
+                        push_notification: {
+                            enabled: document.getElementById('push_notifications').checked
+                        }
+                    }
+                },
+                recording_settings: {
+                    recording_mode: document.getElementById('recording_mode').value,
+                    video_quality: {
+                        resolution: document.getElementById('video_quality').value === '1080p' ? '1920x1080' : document.getElementById('video_quality').value,
+                        fps: parseInt(document.getElementById('fps').value)
+                    },
+                    storage_settings: {
+                        retention_period: parseInt(document.getElementById('retention_period').value),
+                        encryption_enabled: document.getElementById('encryption_enabled').checked
+                    },
+                    audio_recording: {
+                        enabled: document.getElementById('audio_recording').checked
+                    }
+                }
+            };
+
+            return formData;
+        }
+
+        async function submitConfiguration() {
+            const formData = collectFormData();
+            
+            // Show loading
+            document.getElementById('loading').classList.add('active');
+            
+            try {
+                // Simulate API call
+                const response = await fetch('/api/cameras', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (response.ok) {
+                    document.getElementById('loading').classList.remove('active');
+                    document.getElementById('success-message').style.display = 'block';
+                    document.getElementById('submit-btn').style.display = 'none';
+                    
+                    // Log the configuration for debugging
+                    console.log('Camera Configuration:', formData);
+                } else {
+                    throw new Error('Failed to save configuration');
+                }
+            } catch (error) {
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-text').textContent = error.message;
+                console.error('Error:', error);
+                console.log('Configuration data:', formData);
+            }
+        }
+
+        // Allow Enter key to add emails
+        document.getElementById('email_input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addEmail();
+            }
+        });
+
+        // Initialize the form
+        document.addEventListener('DOMContentLoaded', function() {
+            showStep(1);
+        });
+    </script>
+</body>
+</html>
